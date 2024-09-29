@@ -80,10 +80,10 @@ jobs:
     # Execute all unit tests in the solution
     - name: NUnit Tests
       working-directory: ICT3101_Calculator.UnitTests/
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
     - name: SpecFlow Tests
       working-directory: SpecFlowCalculatorTests/
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
