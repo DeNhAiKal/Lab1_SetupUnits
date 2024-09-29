@@ -46,7 +46,6 @@ on:
 
 jobs:
   build:
-
     strategy:
       matrix:
         configuration: [Debug, Release]
@@ -54,8 +53,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Solution_Name: Lab1_SetupUnits.sln                        # Replace with your solution name.
-      Test_Project_Path: ICT3101_Calculator.UnitTests\\ICT3101_Calculator.UnitTests.csproj  # Correct path to your test project.
+      Solution_Name: Lab1_SetupUnits.sln  # Your solution name.
+      Test_Project_Path: ICT3101_Calculator.UnitTests/ICT3101_Calculator.UnitTests.csproj  # Relative path to your test project.
 
     steps:
     - name: Checkout
@@ -69,22 +68,31 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    # Add MSBuild to the PATH
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
 
-    # Execute all unit tests in the solution
-    - name: NUnit Tests 
-      run: dotnet test $env:Test_Project_Path --no-build --verbosity normal  # Removed working-directory
+    # Restore the solution
+    - name: Restore solution
+      run: dotnet restore ${{ env.Solution_Name }}
 
-    - name: SpecFlow Tests
-      run: dotnet test SpecFlowCalculatorTests/ --no-build --verbosity normal  # Removed working-directory
+    # Build the solution
+    - name: Build solution
+      run: dotnet build ${{ env.Solution_Name }} --configuration ${{ matrix.configuration }} --no-restore
 
-    # Restore the application
+    # Run NUnit Tests
+    - name: Run NUnit Tests
+      run: dotnet test ${{ env.Test_Project_Path }} --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+      working-directory: ICT3101_Calculator.UnitTests  # Set the working directory to the test project directory
+
+    # Run SpecFlow Tests
+    - name: Run SpecFlow Tests
+      run: dotnet test SpecFlowCalculatorTests/ --configuration ${{ matrix.configuration }} --no-build --verbosity normal
+      working-directory: SpecFlowCalculatorTests/  # Set the working directory to the SpecFlow tests directory
+
+    # Restore the application (if necessary)
     - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
+      run: msbuild ${{ env.Solution_Name }} /t:Restore /p:Configuration=${{ matrix.configuration }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     #- name: Decode the pfx
