@@ -186,6 +186,22 @@ namespace Lab1_SetupUnits
             double result = (1 / decayParameter) * Math.Log(1 + decayParameter * initialFailureIntensity * time);
             return Math.Round(result);
         }
+
+        public double GenMagicNum(double input, IFileReader fileReader)
+        {
+            double result = 0;
+            int choice = Convert.ToInt16(input);
+            //Dependency------------------------------
+           // FileReader getTheMagic = new FileReader();
+            //----------------------------------------
+            string[] magicStrings = fileReader.Read("MagicNumbers.txt");
+            if ((choice >= 0) && (choice < magicStrings.Length))
+            {
+                result = Convert.ToDouble(magicStrings[choice]);
+            }
+            result = (result > 0) ? (2 * result) : (-2 * result);
+            return result;
+        }
     }
     //testtestetst
 }

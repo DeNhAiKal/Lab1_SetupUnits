@@ -189,5 +189,44 @@ namespace ICT3101_Calculator.UnitTests
             // Assert
             Assert.That(() => _calculator.UnknownFunctionB(4, 5), Throws.ArgumentException);
         }
+        [Test]
+        public void GenMagicNum_ValidInput_ReturnsCorrectResult()
+        {
+            // Arrange: Create a test file
+            IFileReader fileReader = new FileReader(); 
+            File.WriteAllLines("MagicNumbers.txt", new string[] { "10", "20", "30", "40" });
+
+            // Act
+            double result = _calculator.GenMagicNum(2, fileReader);  // Injected// Index 2 corresponds to 30
+
+            // Assert
+            Assert.AreEqual(60, result);  // Since 30 * 2 = 60
+        }
+        [Test]
+        public void GenMagicNum_InvalidInput_ReturnsNegativeResult()
+        {
+            // Arrange: Create a test file
+            IFileReader fileReader = new FileReader();
+            File.WriteAllLines("MagicNumbers.txt", new string[] { "10", "20", "30", "40" });
+
+            // Act
+            double result = _calculator.GenMagicNum(-1, fileReader); // Invalid input, expect 0
+
+            // Assert
+            Assert.AreEqual(0, result);  // Expect a negative result to be handled
+        }
+        [Test]
+        public void GenMagicNum_OutOfRange_ReturnsDefaultValue()
+        {
+            // Arrange: Create a test file
+            IFileReader fileReader = new FileReader(); 
+            File.WriteAllLines("MagicNumbers.txt", new string[] { "10", "20", "30", "40" });
+
+            // Act
+            double result = _calculator.GenMagicNum(5, fileReader); // Index 5 is out of range
+
+            // Assert
+            Assert.AreEqual(0, result);  // Expect default behavior (no result)
+        }
     }
 }
